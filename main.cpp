@@ -1,76 +1,17 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
 #include <random>
+#include <cmath>
+#include "variables/variables.h"
 #include "helper/helper.h"
 #include "player/player.h"
-#include "variables/variables.h"
 
 using namespace sf;  // sf comes from SFML
 using namespace std; // sf comes from SFML
 
-// int random_position_gen(int position_dim, int percent_margin);
-// Font create_font(const string& font_path);
-void create_text(Text &txt, Font font, int char_size, Color color, String font_detail);
-
-
-#include <SFML/Graphics.hpp>
-#include <string>
-#include <iostream>
-
-using namespace std;
-
-// class Player {
-//     public:
-//         double thruster_mean = 0.04f;
-//         double thruster_amplitude = 0.04f;
-//         double angle = 0;
-//         double angular_speed = 0;
-//         double angular_acceleration = 0;
-//         double x_position = 400;
-//         double x_speed = 0;
-//         double x_acceleration = 0;
-//         double y_position = 400;
-//         double y_velocity = 0;
-//         double y_acceleration = 0;
-//         int target_counter = 0;
-//         bool is_dead = false;
-
-//         Player() {
-//             std::cout << "helllo" << std::endl;
-//         }
-// };
-
-// class PID_Player: public Player {
-//     public:
-//         string name = "PID";
-//         double thruster_amplitude = 0.04;
-//         int alpha = 50; // transparency value of the uav
-//         double diff_amplitude = 0.003;
-//         double dt = 1 / 60;
-
-//         PID_Player() {
-//             std::cout << "helllo" << std::endl;
-//         };
-
-//         // attitude
-//         // double xPID = PID(0.2, 0, 0.2, 25, -25);
-//         // double aPID = PID(0.02, 0, 0.01, 1, -1);
-
-//         // //altitude
-//         // double yPID = PID(2.5, 0, 1.5, 100, -100);
-//         // double ydPID = PID(1, 0, 0, 1, -1);
-// };
-
 
 int main()
 {
-    VideoMode mode = VideoMode::getDesktopMode();
-    const int WIDTH = mode.width / WIDTH_SCALE;
-    const int HEIGHT = mode.height / WIDTH_SCALE + mode.height / EXTRA_HEIGHT_SCALE;
-    const int WINDOW_CENTER_X = (int)(WIDTH / 2);
-    const int WINDOW_CENTER_Y = (int)(HEIGHT / 2);
-
     // Create an SFML window
     RenderWindow dep_quadcop_window(VideoMode(WIDTH, HEIGHT), "SFML window");
 
@@ -188,11 +129,6 @@ int main()
             target_animation_clock.restart();
         }
 
-        // do the for loop for the players
-            // if player = pid
-            // calculate the updated left and right thrust using pid_player.act method
-        
-
         dep_quadcop_window.clear(Color(131, 176, 181, 50));
 
         dep_quadcop_window.draw(cloud_1);
@@ -214,9 +150,51 @@ int main()
             frame_count = 0;
             test_clock.restart();
         }
-    }
 
-    printf("Hello, World \n");
+        // do the for loop for the players
+        // int P = sizeof(players)/sizeof(players[0]);
+        // for(int i=0; i < P; i++) 
+        // {
+        //     // if player = pid
+        //     double thrust_left, thrust_right;
+        //     double dist_btn_target_flight_obj_x = target_animation_sprite.getPosition().x - players[0].x_position_;
+        //     double dist_btn_target_flight_obj_y = target_animation_sprite.getPosition().y - players[0].y_position_;
+        //     if(players[0].name == "PID") {
+
+        //         tie(thrust_left, thrust_right) = 
+        //             players[0].act(
+        //                 dist_btn_target_flight_obj_x,
+        //                 dist_btn_target_flight_obj_y,
+        //                 players[0].y_velocity_,
+        //                 players[0].angle_
+        //             );
+        //     }
+        //     players[0].x_acceleration_ += ((thrust_left + thrust_right) * sin(players[0].angle_ * M_PI / 180)) / MASS_OF_OBJ;
+        //     players[0].y_acceleration_ += ((thrust_left + thrust_right) * cos(players[0].angle_ * M_PI / 180)) / MASS_OF_OBJ;
+        //     players[0].angular_acceleration_ = ARM * (thrust_left + thrust_right) / MASS_OF_OBJ;
+
+        //     players[0].x_velocity_ += players[0].x_acceleration_;
+        //     players[0].y_velocity_ += players[0].y_acceleration_;
+
+        //     players[0].x_position_ += players[0].x_velocity_;
+        //     players[0].y_position_ += players[0].y_velocity_;
+
+        //     double dist_btwn_target_flight_obj = sqrt(pow(dist_btn_target_flight_obj_x, 2) + pow(dist_btn_target_flight_obj_y, 2));
+
+        //     if(dist_btwn_target_flight_obj < 50) {
+        //         players[0].target_counter_ += 1;
+        //     }
+        //     else if(dist_btwn_target_flight_obj > 1000) {
+        //         players[0].is_dead_ = true;
+        //     }
+
+        //     // spawn target 
+        //     // player draw
+        //     flight_animation_sprite.rotate(players[0].angle_);
+        //     flight_animation_sprite.setPosition(players[0].x_position_, players[0].y_position_);
+        // }
+        
+    }
 
     return 0;
 }

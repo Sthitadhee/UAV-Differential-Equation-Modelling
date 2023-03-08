@@ -1,5 +1,28 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #include <string>
+#include <tuple>
+
+#endif
+
 using namespace std;
+
+
+class PID {
+    public:
+        double kp;
+        double ki;
+        double kd; 
+        double error_last;
+        double integral_error;
+        double saturation_max;
+        double saturation_min;
+
+    PID(double a, double b, double c, double d, double e);
+
+    double compute(double error, double dt);
+};
 
 class Player
 {
@@ -9,7 +32,7 @@ public:
     double angular_speed_;
     double angular_acceleration_;
     double x_position_;
-    double x_speed_;
+    double x_velocity_;
     double x_acceleration_;
     double y_position_;
     double y_velocity_;
@@ -26,7 +49,7 @@ public:
         double angular_speed,
         double angular_acceleration,
         double x_position,
-        double x_speed,
+        double x_velocity,
         double x_acceleration,
         double y_position,
         double y_velocity,
@@ -44,6 +67,10 @@ class PID_Player: public Player {
         double thruster_amplitude;
         double diff_amplitude;
         double dt;
+        PID xPID;
+        PID aPID;
+        PID yPID;
+        PID dyPID; //y (thrust) difference of delta y??
 
         PID_Player();
 
@@ -55,20 +82,5 @@ class PID_Player: public Player {
             double e
         );
 
-        void act(double a, double b, double c, double d, double e);
-};
-
-class PID {
-    public:
-        double kp;
-        double ki;
-        double kd; 
-        double error_last;
-        double integral_error;
-        double saturation_max;
-        double saturation_min;
-
-    PID(double a, double b, double c, double d, double e);
-
-    double compute(double error, double dt);
+        tuple<double, double>  act(double a, double b, double c, double d);
 };

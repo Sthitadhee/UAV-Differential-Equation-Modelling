@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-
+#include <variables/variables.h>
 #include <iostream>
 #include <player.h>
 
@@ -8,10 +8,10 @@ Player::Player():
     angle_(0),
     angular_speed_(0),
     angular_acceleration_(0),
-    x_position_(400),
-    x_speed_(0),
+    x_position_(WINDOW_CENTER_X),
+    x_velocity_(0),
     x_acceleration_(0),
-    y_position_(400),
+    y_position_(WINDOW_CENTER_Y),
     y_velocity_(0),
     y_acceleration_(0),
     target_counter_(0),
@@ -23,7 +23,7 @@ Player::Player(
         double angular_speed,
         double angular_acceleration,
         double x_position,
-        double x_speed,
+        double x_velocity,
         double x_acceleration,
         double y_position,
         double y_velocity,
@@ -36,7 +36,7 @@ Player::Player(
         angular_speed_(angular_speed),
         angular_acceleration_(angular_acceleration),
         x_position_(x_position),
-        x_speed_(x_speed),
+        x_velocity_(x_velocity),
         x_acceleration_(x_acceleration),
         y_position_(y_position),
         y_velocity_(y_velocity),
@@ -49,43 +49,44 @@ PID_Player::PID_Player():
     alpha(50),// transparency value of the uav
     thruster_amplitude(0.04),
     diff_amplitude(0.003),
-    dt(1/60){};
+    dt(1/60),
+    xPID(PID(0.2f, 0, 0.2, 25, 25)),
+    aPID(PID(0.2f, 0, 0.2, 25, 25)),
+    yPID(PID(0.2f, 0, 0.2, 25, 25)),
+    dyPID(PID(0.2f, 0, 0.2, 25, 25)){};
 
 PID_Player::PID_Player(string a, int b, double c, double d, double e):
     name(a),
     alpha(b),// transparency value of the uav
     thruster_amplitude(c),
     diff_amplitude(d),
-    dt(e){};
+    dt(e),
+    xPID(PID(0.2f, 0, 0.2, 25, 25)),
+    aPID(PID(0.2f, 0, 0.2, 25, 25)),
+    yPID(PID(0.2f, 0, 0.2, 25, 25)),
+    dyPID(PID(0.2f, 0, 0.2, 25, 25)){};
 
-void PID_Player::act(double a, double b, double c, double d, double e) {
+tuple<double, double> PID_Player::act(double a, double b, double c, double d) {
     // def act(self, obs):
-        // thruster_left = self.thruster_mean
-        // thruster_right = self.thruster_mean
+    double thrust_left = this->thruster_mean_, thrust_right = this->thruster_mean_;
+    double error_x = a, error_y = b, dy = c, angle = d;
 
-        // error_x, xd, error_y, yd, a, ad = obs
+    // What is this ac??
+    double ac = this->xPID.compute(-error_x, this->dt);
+    double error_amplitude = ac - a;
+    double action1 = this->aPID.compute(-error_x, this->dt);
 
-        // ac = self.xPID.compute(-error_x, self.dt)
+    double dyc = this->yPID.compute(error_y, this->dt);
+    double error_dy = dyc - dy;
 
-        // error_a = ac - a
-        // action1 = self.aPID.compute(-error_a, self.dt)
+    double action0 = this->dyPID.compute(-error_dy, this->dt);
 
-        // ydc = self.yPID.compute(error_y, self.dt)
-        // error_yd = ydc - yd
-        // action0 = self.ydPID.compute(-error_yd, self.dt)
+    thrust_left += action0 * this->thruster_amplitude;
+    thrust_right += action0 * this->thruster_amplitude;
+    thrust_left += action1 * this->diff_amplitude;
+    thrust_right += action1 * this->diff_amplitude;
 
-        // thruster_left += action0 * self.thruster_amplitude
-        // thruster_right += action0 * self.thruster_amplitude
-        // thruster_left += action1 * self.diff_amplitude
-        // thruster_right -= action1 * self.diff_amplitude
-
-        // attitude
-        // double xPID = PID(0.2, 0, 0.2, 25, -25);
-        // double aPID = PID(0.02, 0, 0.01, 1, -1);
-
-        //altitude
-        // double yPID = PID(2.5, 0, 1.5, 100, -100F);
-        // double ydPID = PID(1, 0, 0, 1, -1);
+    return make_tuple(thrust_left, thrust_right);
 };
 
 PID::PID(double a, double b, double c, double d, double e):
