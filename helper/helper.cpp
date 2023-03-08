@@ -1,5 +1,4 @@
-#include "helper.h"  
-
+#include "helper.h"
 
 int random_position_gen(int position_dim, int percent_margin)
 {
@@ -14,8 +13,8 @@ int random_position_gen(int position_dim, int percent_margin)
     return random_value;
 }
 
-Font create_font(const string& font_path) 
-{   
+Font create_font(const string &font_path)
+{
     // Load font type
     Font Font_Type;
     if (!Font_Type.loadFromFile("../assets/fonts/" + font_path))
@@ -26,7 +25,7 @@ Font create_font(const string& font_path)
     return Font_Type;
 }
 
-vector<Texture> load_texture(string name, int n_img, string file_path) 
+vector<Texture> load_texture(string name, int n_img, string file_path)
 {
     vector<Texture> flight_animation_obj_texture(n_img);
 
@@ -44,3 +43,22 @@ vector<Texture> load_texture(string name, int n_img, string file_path)
     }
     return flight_animation_obj_texture;
 }
+
+void create_text(Text &txt, Color font_color, int WIDTH, int FPS_Y, int t_width)
+{
+    txt.setFillColor(font_color);
+    txt.setPosition(WIDTH - t_width - FPS_Y, FPS_Y);
+}
+
+// @TODO 2: why does this does not draw the flight obj
+// void create_sprite(Sprite& sprite, int scaling_factor, int c_x, int c_y)
+// {
+//     // sprite.setTexture(texture);
+//     // Set the scaling factors
+//     sprite.setScale(scaling_factor, scaling_factor);
+//     // get the width and height of the flight obj
+//     FloatRect bounds_flight_obj = sprite.getLocalBounds();
+//     // set the position of the flight obj
+//     cout << c_x - bounds_flight_obj.width * 0.5f * scaling_factor << endl;
+//     sprite.setPosition(c_x - bounds_flight_obj.width * 0.5f * scaling_factor, c_y - bounds_flight_obj.height * 0.5f * scaling_factor);
+// }
