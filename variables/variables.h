@@ -1,14 +1,17 @@
-#pragma once
+#ifndef VARIABLE_H
+#define VARIABLE_H
 
 #include <SFML/Graphics.hpp>
 
-const float WIDTH_SCALE = 1.2f; // scales the width personal preference
+using namespace sf;  // sf comes from SFML
+
+const double WIDTH_SCALE = 1.2; // scales the width personal preference
 const int EXTRA_HEIGHT_SCALE = 25;
-const float FLIGHT_OBJ_SCALE = 0.6f, TARGET_OBJ_SCALE = 0.3f;
-const int FPS = 90, FPS_Y = 20;
+const double FLIGHT_OBJ_SCALE = 0.6, TARGET_OBJ_SCALE = 0.3;
+const int FPS = 60, FPS_Y = 20;
 
 // Physics constants
-const float GRAVITY = 9.8f;
+const double GRAVITY = 0.08;
 const int MASS_OF_OBJ = 1, ARM = 25;
 
 // Constants needed for graphics
@@ -21,3 +24,5 @@ const int WIDTH = mode.width / WIDTH_SCALE;
 const int HEIGHT = mode.height / WIDTH_SCALE + mode.height / EXTRA_HEIGHT_SCALE;
 const int WINDOW_CENTER_X = (int)(WIDTH / 2);
 const int WINDOW_CENTER_Y = (int)(HEIGHT / 2);
+
+#endif

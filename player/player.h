@@ -1,20 +1,22 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-
 #include <string>
-#include <tuple>
-
-#endif
+#include <SFML/Graphics.hpp>
+#include <iostream>
 
 using namespace std;
 
+struct Thrust {
+    double thrust_left, thrust_right;
+};
 
 class PID {
+
+    double error_last;
     public:
         double kp;
         double ki;
         double kd; 
-        double error_last;
         double integral_error;
         double saturation_max;
         double saturation_min;
@@ -22,6 +24,8 @@ class PID {
     PID(double a, double b, double c, double d, double e);
 
     double compute(double error, double dt);
+
+    void set_error_last(double error);
 };
 
 class Player
@@ -57,6 +61,8 @@ public:
         int target_counter,
         bool is_dead
     );
+
+    void set_position(double position_x, double position_y);
         
 };
 
@@ -82,5 +88,7 @@ class PID_Player: public Player {
             double e
         );
 
-        tuple<double, double>  act(double a, double b, double c, double d);
+        Thrust act(double a, double b, double c, double d);
 };
+
+#endif

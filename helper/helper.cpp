@@ -62,3 +62,9 @@ void create_text(Text &txt, Color font_color, int WIDTH, int FPS_Y, int t_width)
 //     cout << c_x - bounds_flight_obj.width * 0.5f * scaling_factor << endl;
 //     sprite.setPosition(c_x - bounds_flight_obj.width * 0.5f * scaling_factor, c_y - bounds_flight_obj.height * 0.5f * scaling_factor);
 // }
+
+
+double cal_dist_btn_2_points(double x_flight, double x_target, double y_flight, double y_target)
+{
+    return sqrt(pow(x_flight - x_target, 2) + pow(y_flight - y_target, 2));
+}

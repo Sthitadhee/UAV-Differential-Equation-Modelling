@@ -1,17 +1,15 @@
-#include <SFML/Graphics.hpp>
-#include <variables/variables.h>
-#include <iostream>
-#include <player.h>
+#include "player.h"
+
 
 Player::Player():
-    thruster_mean_(0.04f),
+    thruster_mean_(0.04),
     angle_(0),
     angular_speed_(0),
     angular_acceleration_(0),
-    x_position_(WINDOW_CENTER_X),
+    x_position_(400),
     x_velocity_(0),
     x_acceleration_(0),
-    y_position_(WINDOW_CENTER_Y),
+    y_position_(400),
     y_velocity_(0),
     y_acceleration_(0),
     target_counter_(0),
@@ -44,16 +42,20 @@ Player::Player(
         target_counter_(target_counter),
         is_dead_(is_dead) {};
 
+void Player::set_position(double position_x, double position_y) {
+    this->x_position_ = position_x, this->y_position_ = position_y;
+};
+
 PID_Player::PID_Player():
     name("PID"),
     alpha(50),// transparency value of the uav
     thruster_amplitude(0.04),
     diff_amplitude(0.003),
-    dt(1/60),
-    xPID(PID(0.2f, 0, 0.2, 25, 25)),
-    aPID(PID(0.2f, 0, 0.2, 25, 25)),
-    yPID(PID(0.2f, 0, 0.2, 25, 25)),
-    dyPID(PID(0.2f, 0, 0.2, 25, 25)){};
+    dt(1.0/60),
+    xPID(PID(0.2, 0, 0.2, 25, -25)),
+    aPID(PID(0.02, 0, 0.01, 1, -1)),
+    yPID(PID(2.5, 0, 1.5, 100, -100)),
+    dyPID(PID(1.0, 0, 0, 1.0, -1)){};
 
 PID_Player::PID_Player(string a, int b, double c, double d, double e):
     name(a),
@@ -61,20 +63,21 @@ PID_Player::PID_Player(string a, int b, double c, double d, double e):
     thruster_amplitude(c),
     diff_amplitude(d),
     dt(e),
-    xPID(PID(0.2f, 0, 0.2, 25, 25)),
-    aPID(PID(0.2f, 0, 0.2, 25, 25)),
-    yPID(PID(0.2f, 0, 0.2, 25, 25)),
-    dyPID(PID(0.2f, 0, 0.2, 25, 25)){};
+    xPID(PID(0.2, 0, 0.2, 25, -25)),
+    aPID(PID(0.02, 0, 0.01, 1, -1)),
+    yPID(PID(2.5, 0, 1.5, 100, -100)),
+    dyPID(PID(1.0, 0, 0, 1, -1)){};
 
-tuple<double, double> PID_Player::act(double a, double b, double c, double d) {
+
+Thrust PID_Player::act(double a, double b, double c, double d) {
     // def act(self, obs):
     double thrust_left = this->thruster_mean_, thrust_right = this->thruster_mean_;
     double error_x = a, error_y = b, dy = c, angle = d;
-
     // What is this ac??
     double ac = this->xPID.compute(-error_x, this->dt);
-    double error_amplitude = ac - a;
-    double action1 = this->aPID.compute(-error_x, this->dt);
+    double error_amplitude = ac - angle;
+    double action1 = this->aPID.compute(-error_amplitude, this->dt);
+    
 
     double dyc = this->yPID.compute(error_y, this->dt);
     double error_dy = dyc - dy;
@@ -84,20 +87,28 @@ tuple<double, double> PID_Player::act(double a, double b, double c, double d) {
     thrust_left += action0 * this->thruster_amplitude;
     thrust_right += action0 * this->thruster_amplitude;
     thrust_left += action1 * this->diff_amplitude;
-    thrust_right += action1 * this->diff_amplitude;
+    thrust_right -= action1 * this->diff_amplitude;
 
-    return make_tuple(thrust_left, thrust_right);
+
+    Thrust thrust;
+    thrust.thrust_left = thrust_left;
+    thrust.thrust_right = thrust_right;
+    return thrust;
 };
 
 PID::PID(double a, double b, double c, double d, double e):
     kp(a), ki(b), kd(c), saturation_max(d), saturation_min(e), error_last(0), integral_error(0) {};
+
+void PID::set_error_last(double error) {
+    this->error_last = error;
+}
 
 double PID::compute(double error, double dt) 
 {
     double derivative_error = (error - this->error_last)/dt;
     this->integral_error += error * dt;
     double output = this->kp * error + this->ki * this->integral_error + this->kd * derivative_error;
-    this->error_last = error;
+    this->set_error_last(error);
     if(output > this->saturation_max && this->saturation_max) 
     {
         output = this->saturation_max;
