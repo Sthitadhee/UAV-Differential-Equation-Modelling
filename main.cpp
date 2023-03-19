@@ -4,6 +4,9 @@
 #include "player/player.h"
 #include "variables/variables.h"
 #include "helper/helper.h"
+#include <utility>
+#include <fstream>
+
 int main()
 {
     // Create an SFML window
@@ -56,9 +59,21 @@ int main()
     // get the width and height of the target obj
     FloatRect bounds_target_obj = target_animation_sprite.getLocalBounds();
     // set the position of the target obj
-    target_animation_sprite.setPosition(WINDOW_CENTER_X + WIDTH / 5, WINDOW_CENTER_Y - HEIGHT / 4);
-    // target_animation_sprite.setPosition(WINDOW_CENTER_X + 400, WINDOW_CENTER_Y - 500);
     // target_animation_sprite.setPosition(WINDOW_CENTER_X + WIDTH / 5, WINDOW_CENTER_Y - HEIGHT / 4);
+    double target_positions_x[n_targets + 1];
+    double target_positions_y[n_targets + 1];
+    bool show_graph = false;
+
+    for (int i = 0; i < n_targets + 1; i++)
+    {
+        int target_x = random_position_gen(WIDTH, 30);
+        int target_y = random_position_gen(HEIGHT, 40);
+
+        target_positions_x[i] = target_x - bounds_target_obj.width * 0.5 * TARGET_OBJ_SCALE;
+        target_positions_y[i] = target_y - bounds_target_obj.height * 0.5 * TARGET_OBJ_SCALE;
+
+        // target_animation_sprite.setPosition(target_x - bounds_target_obj.width * 0.5 * TARGET_OBJ_SCALE + 10, target_y - bounds_target_obj.height * 0.5 * TARGET_OBJ_SCALE + 10);
+    }
 
     // Create a clock to measure time between frames
     Clock flight_animation_clock, target_animation_clock, test_clock;
@@ -71,8 +86,11 @@ int main()
 
     PID_Player players[1] = {PID_Player()};
     players[0].set_position(WINDOW_CENTER_X, WINDOW_CENTER_Y);
-    double current_angle = 0;
+    double previous_angle = 0;
     double dist_btwn_target_flight_obj = 0;
+    int step = 1;
+    ofstream file("output.csv");
+
     while (dep_quadcop_window.isOpen())
     {
         Event event;
@@ -82,6 +100,19 @@ int main()
             {
                 dep_quadcop_window.close();
             }
+        }
+        if (players[0].target_counter_ > n_targets)
+        {
+            dep_quadcop_window.clear(Color(131, 176, 181, 50));
+            dep_quadcop_window.draw(cloud_1);
+            dep_quadcop_window.draw(flight_animation_sprite);
+            dep_quadcop_window.draw(fps_txt);
+            dep_quadcop_window.display();
+        }
+        else
+        {
+            target_animation_sprite.setPosition(target_positions_x[players[0].target_counter_], target_positions_y[players[0].target_counter_]);
+            // target_animation_sprite.setPosition(1400, 600);
         }
         // Update the animation
         if (flight_animation_clock.getElapsedTime().asMilliseconds() > animation_speed)
@@ -107,16 +138,6 @@ int main()
         }
         cloud_1.setPosition(x_cloud1, y_cloud1);
 
-        // if (target_animation_clock.getElapsedTime().asSeconds() > 3.0f)
-        // {
-        //     /* random */
-        //     int target_x = random_position_gen(WIDTH, 10);
-        //     int target_y = random_position_gen(HEIGHT, 15);
-
-        //     target_animation_sprite.setPosition(target_x - bounds_target_obj.width * 0.5 * TARGET_OBJ_SCALE, target_y - bounds_target_obj.height * 0.5 * TARGET_OBJ_SCALE);
-        //     target_animation_clock.restart();
-        // }
-
         dep_quadcop_window.clear(Color(131, 176, 181, 50));
 
         dep_quadcop_window.draw(cloud_1);
@@ -129,7 +150,10 @@ int main()
         {
             if (!players[0].is_dead_)
             {
-                dep_quadcop_window.draw(target_animation_sprite);
+                if (players[0].target_counter_ <= n_targets)
+                {
+                    dep_quadcop_window.draw(target_animation_sprite);
+                }
                 players[0].y_acceleration_ = GRAVITY;
                 players[0].x_acceleration_ = 0;
                 players[0].angular_acceleration_ = 0;
@@ -160,30 +184,50 @@ int main()
 
                 dist_btwn_target_flight_obj = cal_dist_btn_2_points(players[0].x_position_, target_position_x, players[0].y_position_, target_position_y);
 
-                if (dist_btwn_target_flight_obj < 5)
+                if (players[0].target_counter_ == 0)
+                {
+                    file
+                        << players[0].x_acceleration_
+                        << ","
+                        << players[0].y_acceleration_
+                        << ","
+                        << players[0].x_velocity_
+                        << ","
+                        << players[0].y_velocity_
+                        << ","
+                        << (players[0].x_position_ - WINDOW_CENTER_X)
+                        << ","
+                        << (players[0].y_position_ - WINDOW_CENTER_Y)
+                        << "\n";
+                    cout << players[0].angle_ << " " << previous_angle << " " << -players[0].angle_ + previous_angle << endl;
+                }
+
+                if (dist_btwn_target_flight_obj < 40)
                 {
                     players[0].target_counter_ += 1;
-                    cout << "again" << dist_btwn_target_flight_obj << endl;
-                    int target_x = random_position_gen(WIDTH, 10);
-                    int target_y = random_position_gen(HEIGHT, 15);
-
-                    target_animation_sprite.setPosition(target_x - bounds_target_obj.width * 0.5 * TARGET_OBJ_SCALE + 10, target_y - bounds_target_obj.height * 0.5 * TARGET_OBJ_SCALE + 10);
-                    // dist_btwn_target_flight_obj = 0;
                 }
                 else if (dist_btwn_target_flight_obj > 1000)
                 {
-                    players[0].is_dead_ = true;
+                    // players[0].is_dead_ = true;
                 }
             }
             else
             {
-                // dep_quadcop_window.close();
-                // exit(EXIT_FAILURE);
+                dep_quadcop_window.clear(Color(131, 176, 181, 50));
+                dep_quadcop_window.draw(cloud_1);
+                dep_quadcop_window.draw(flight_animation_sprite);
+                dep_quadcop_window.draw(fps_txt);
+                dep_quadcop_window.display();
             }
 
             // player draw
-            flight_animation_sprite.rotate(-players[0].angle_ + current_angle);
-            current_angle = players[0].angle_;
+            // Update sprite frame based on current step
+            // int frame_index = static_cast<int>(step * 0.3) % flight_animation_obj_texture.size();
+            step++;
+            // flight_animation_sprite.setTexture(flight_animation_obj_texture[frame_index]);
+            flight_animation_sprite.rotate(-players[0].angle_ + previous_angle);
+            flight_animation_sprite.setOrigin(flight_animation_sprite.getLocalBounds().width / 2, flight_animation_sprite.getLocalBounds().height / 2);
+            previous_angle = players[0].angle_;
 
             flight_animation_sprite.setPosition(
                 players[0].x_position_ - radius_x,
@@ -207,5 +251,7 @@ int main()
         }
     }
 
+    file.close();
+    cout << "helloworld" << endl;
     return 0;
 }

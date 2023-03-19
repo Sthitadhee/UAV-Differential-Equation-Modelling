@@ -16,7 +16,8 @@ const int MASS_OF_OBJ = 1, ARM = 25;
 
 // Constants needed for graphics
 // milliseconds per frame -> animation_speed
-const int n_FLIGHT_OBJ_IMG = 5, n_TARGET_OBJ_IMG = 8, animation_speed = 50;
+const int n_FLIGHT_OBJ_IMG = 5, n_TARGET_OBJ_IMG = 8;
+const float animation_speed = 50;
 double x_cloud1 = 150.00, y_cloud1 = 200.00, speed_cloud1 = 0.5;
 
 VideoMode mode = VideoMode::getDesktopMode();
@@ -24,5 +25,7 @@ const int WIDTH = mode.width / WIDTH_SCALE;
 const int HEIGHT = mode.height / WIDTH_SCALE + mode.height / EXTRA_HEIGHT_SCALE;
 const int WINDOW_CENTER_X = (int)(WIDTH / 2);
 const int WINDOW_CENTER_Y = (int)(HEIGHT / 2);
+
+int n_targets = 3;
 
 #endif

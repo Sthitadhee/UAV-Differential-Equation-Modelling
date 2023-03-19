@@ -5,8 +5,8 @@ int random_position_gen(int position_dim, int percent_margin)
     random_device seed;  // Obtain a random number from hardware
     mt19937 gen(seed()); // Seed the generator
 
-    int min = (int)(position_dim / percent_margin);
-    int max = (int)(position_dim - position_dim / percent_margin);
+    int min = (int)(position_dim * percent_margin/100);
+    int max = (int)(position_dim - position_dim * percent_margin/100);
     uniform_int_distribution<> distr(min, max);
     int random_value = distr(gen);
 
@@ -68,3 +68,33 @@ double cal_dist_btn_2_points(double x_flight, double x_target, double y_flight, 
 {
     return sqrt(pow(x_flight - x_target, 2) + pow(y_flight - y_target, 2));
 }
+
+// void drawLineGraph(RenderWindow& window, vector<float>& x_values, const vector<float>& y_values) {
+//     // set the scale for the graph
+//     float x_scale = 1.0;
+//     float y_scale = 1.0;
+    
+//     // create the x and y axis lines
+//     VertexArray x_axis(Lines, 2);
+//     x_axis[0].position = Vector2f(2000, 1000);
+//     x_axis[0].color = Color::Black;
+//     x_axis[1].position = Vector2f(2000 + 100, 1000);
+//     x_axis[1].color = Color::Black;
+//     VertexArray y_axis(Lines, 2);
+//     y_axis[0].position = Vector2f(2000, 900);
+//     y_axis[0].color = Color::Black;
+//     y_axis[1].position = Vector2f(2000, 1000);
+//     y_axis[1].color = Color::Black;
+    
+//     // create a line to represent the graph
+//     VertexArray line(LineStrip, x_values.size());
+//     for (int i = 0; i < x_values.size(); i++) {
+//         line[i].position = Vector2f(x_values[i] * x_scale, 1000 - y_values[i] * y_scale);
+//         line[i].color = Color::Red;
+//     }
+    
+//     // draw the x and y axis lines and the line graph
+//     window.draw(x_axis);
+//     window.draw(y_axis);
+//     window.draw(line);
+// }
