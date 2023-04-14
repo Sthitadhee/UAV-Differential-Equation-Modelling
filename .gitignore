@@ -2,3 +2,5 @@
 /build1
 notes.md
 /assets
+*.mov
+.DS_Store

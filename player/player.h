@@ -1,3 +1,8 @@
+/*
+Author: Sthitadhee Panthadas
+All the class declarations of PID, Player
+*/
+
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <string>

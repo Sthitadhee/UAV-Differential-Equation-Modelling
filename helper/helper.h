@@ -1,3 +1,9 @@
+/*
+Author: Sthitadhee Panthadas
+Helper functions declarations used in the main file
+*/
+
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>

@@ -7,7 +7,7 @@ using namespace sf;  // sf comes from SFML
 
 const double WIDTH_SCALE = 1.2; // scales the width personal preference
 const int EXTRA_HEIGHT_SCALE = 25;
-const double FLIGHT_OBJ_SCALE = 0.6, TARGET_OBJ_SCALE = 0.3;
+const double FLIGHT_OBJ_SCALE = 0.4, TARGET_OBJ_SCALE = 0.3;
 const int FPS = 60, FPS_Y = 20;
 
 // Physics constants

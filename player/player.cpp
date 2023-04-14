@@ -1,3 +1,9 @@
+/*
+Author: Sthitadhee Panthadas
+All the class implementations of PID, Player
+*/
+
+
 #include "player.h"
 
 

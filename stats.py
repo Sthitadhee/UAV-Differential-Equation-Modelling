@@ -1,22 +1,29 @@
+# Author: Sthitadhee Panthadas
+# Python code used for graphing
+
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 # import seaborn as sns
 
+# read the output file
 data = pd.read_csv('build1/output.csv', names=["x_acc", "y_acc", "x_vel", "y_vel", "x_pos", "y_pos"])
 
 
 y = []
+# create the x values for the x axis
 for i in range(len(list(data.x_acc))):
     value = i * (1/60)   # Calculate the value as a multiple of 1/60
     y.append(value)  # Add the value to the y
 
-# print(y)
+# plot the figures
 fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(10, 9.5))
 for i in range(6):
     axes.flat[i].set_xlabel("time")
     axes.flat[i].set_title(f"Plot {i+1}")
 
+# meta data on the figures
 axes.flat[0].set_ylabel("position x direction")
 axes.flat[1].set_ylabel("position y direction")
 axes.flat[2].set_ylabel("velocity x direction")

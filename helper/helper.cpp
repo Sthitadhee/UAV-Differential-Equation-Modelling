@@ -1,3 +1,9 @@
+/*
+Author: Sthitadhee Panthadas
+Helper functions implementations used in the main file
+*/
+
+
 #include "helper.h"
 
 int random_position_gen(int position_dim, int percent_margin)
