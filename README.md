@@ -1,9 +1,14 @@
 # A Simulation of Modelling And Control of 2D UAV to reach a Target
+## Visual
 ![Content](visualisations/player_pid_content.gif)
+
+## Stabilisation Graph
 ![Simulation Graph](visualisations/stablised_stats.png)
 
 ## Project Structure
 
+```
+PROJECT DIFFERENTIAL EQUATION MODELLING
 ├── CMakeLists.txt
 ├── README.md
 ├── assets
@@ -18,6 +23,7 @@
 ├── stats.py
 └── variables
     └── variables.h
+```
 
 
 <!-- Information for the project -->
