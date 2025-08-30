@@ -7,6 +7,7 @@ Helper functions implementations used in the main file
 #include "helper.h"
 
 int random_position_gen(int position_dim, int percent_margin)
+
 {
     random_device seed;  // Obtain a random number from hardware
     mt19937 gen(seed()); // Seed the generator

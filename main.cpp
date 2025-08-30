@@ -215,7 +215,7 @@ int main()
             // here the data of the updates are stored for graphing
             if (players[0].target_counter_ == 0 || step <= 1000)
             {
-                cout << "working" << endl;
+                // cout << "working" << endl;
                 file
                     << players[0].x_acceleration_
                     << ","
